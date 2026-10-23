@@ -1,58 +1,218 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Sistem Informasi Disporabudpar Kabupaten Jember
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Website profil dan informasi **Dinas Kepemudaan, Olahraga, Kebudayaan, dan Pariwisata (Disporabudpar) Kabupaten Jember**, lengkap dengan panel admin untuk mengelola destinasi wisata dan berita. Dibangun dengan **Laravel 13** dan **Livewire 4**.
 
-## About Laravel
+## Fitur
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+**Situs publik**
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- Beranda dengan slider, destinasi unggulan, dan berita terbaru
+- Peta wisata interaktif (**Leaflet + OpenStreetMap**) dengan penanda per destinasi dan filter kategori
+- Daftar berita dengan filter kategori dan paginasi, serta halaman detail berita
+- Mode terang/gelap
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+**Panel admin** (`/admin`)
 
-## Learning Laravel
+- Login dengan peran `admin` dan `editor`, serta status akun aktif/nonaktif
+- Dashboard ringkasan (jumlah destinasi, destinasi unggulan, berita terbit, draf)
+- Kelola destinasi: tambah, ubah, hapus (soft delete), tandai unggulan, unggah gambar
+- Kelola berita: tulis, ubah, hapus (soft delete), status draf/terbit, unggah gambar sampul
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+**Dalam pengembangan** (tabel basis datanya sudah ada, halamannya belum): kunjungan wisata, kunjungan hotel, data kesenian, data ekonomi kreatif, profil, struktur organisasi, dan hubungi kami.
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## Kebutuhan sistem
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+| Kebutuhan | Versi | Keterangan |
+|---|---|---|
+| **PHP** | **8.3 atau lebih baru** | Dikembangkan dengan PHP 8.5 |
+| **Laravel** | **^13.17** | Terpasang otomatis lewat Composer (dikembangkan dengan 13.38) |
+| **Livewire** | **^4.4** | Terpasang otomatis lewat Composer |
+| **MySQL** | **8.0 atau lebih baru** | Migrasi memakai indeks FULLTEXT dan constraint CHECK. MariaDB belum diuji |
+| **Composer** | 2.x | |
+| **Git** | | |
+| Node.js + npm | 20.19+ atau 22.12+ | **Opsional.** Halaman memakai CSS statis di `public/css`, jadi aplikasi jalan tanpa `npm` |
 
-## Agentic Development
+Ekstensi PHP yang harus aktif: `ctype`, `curl`, `dom`, `fileinfo`, `filter`, `hash`, `mbstring`, `openssl`, `pcre`, `pdo`, `pdo_mysql`, `session`, `tokenizer`, `xml`.
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+Peta dan font dimuat dari CDN (Leaflet dari cdnjs, tile dari OpenStreetMap, font dari Google Fonts), jadi **perlu koneksi internet** saat membuka situs.
+
+Di Windows, paling mudah memakai [Laragon](https://laragon.org/) atau XAMPP, yang sudah menyertakan PHP, MySQL, dan Composer.
+
+## Instalasi
+
+### 1. Ambil kode
 
 ```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+git clone https://github.com/USERNAME/NAMA-REPO.git
+cd NAMA-REPO
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+### 2. Pasang dependensi PHP
 
-## Contributing
+```bash
+composer install
+```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+### 3. Siapkan file `.env`
 
-## Code of Conduct
+```bash
+# Linux / macOS
+cp .env.example .env
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+# Windows (CMD)
+copy .env.example .env
+```
 
-## Security Vulnerabilities
+Lalu buat application key:
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+```bash
+php artisan key:generate
+```
 
-## License
+### 4. Buat database
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Buat database kosong bernama `disporabudpar` (lewat phpMyAdmin, HeidiSQL, atau terminal):
+
+```sql
+CREATE DATABASE disporabudpar CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+```
+
+### 5. Atur `.env`
+
+Buka `.env` dan sesuaikan bagian ini:
+
+```env
+DB_CONNECTION=mysql
+DB_HOST=127.0.0.1
+DB_PORT=3306
+DB_DATABASE=disporabudpar
+DB_USERNAME=root
+DB_PASSWORD=
+
+# Akun admin pertama (WAJIB diisi sebelum langkah 6)
+ADMIN_NAME="Administrator"
+ADMIN_EMAIL=admin@disporabudpar.test
+ADMIN_PASSWORD=isi_password_yang_kuat
+```
+
+> Kalau `ADMIN_PASSWORD` kosong, akun admin **tidak** dibuat.
+
+### 6. Migrasi dan isi data awal
+
+```bash
+php artisan migrate --seed
+```
+
+Perintah ini membuat semua tabel, lalu mengisi data awal: akun admin, daftar kecamatan, kategori, bidang, halaman statis, dan kontak instansi.
+
+### 7. Tautkan folder penyimpanan gambar
+
+```bash
+php artisan storage:link
+```
+
+Langkah ini **wajib**, kalau tidak gambar destinasi dan berita yang diunggah lewat admin tidak akan tampil.
+
+### 8. Jalankan
+
+```bash
+php artisan serve
+```
+
+Buka <http://127.0.0.1:8000>. Alamat ini otomatis diarahkan ke `/publik/beranda`.
+
+## Data contoh (opsional)
+
+Supaya beranda dan peta tidak kosong saat mencoba:
+
+```bash
+php artisan db:seed --class=DestinasiSeeder
+php artisan db:seed --class=BeritaSeeder
+```
+
+Jalankan **setelah** langkah 6, dan cukup sekali. Semua data contoh bisa diubah atau dihapus lewat panel admin.
+
+## Alamat penting
+
+| Alamat | Keterangan |
+|---|---|
+| `/publik/beranda` | Beranda |
+| `/publik/peta-wisata` | Peta wisata (Leaflet) |
+| `/publik/berita` | Daftar berita |
+| `/publik/berita/{slug}` | Detail berita |
+| `/admin/login` | Login admin |
+| `/admin/dashboard` | Dashboard admin |
+| `/admin/destinasi` | Kelola destinasi |
+| `/admin/berita` | Kelola berita |
+
+Masuk ke `/admin/login` dengan `ADMIN_EMAIL` dan `ADMIN_PASSWORD` yang Anda isi di `.env`.
+
+## Struktur basis data
+
+22 tabel domain dan 17 relasi. Diagram lengkap (dengan semua kolom) ada di [`docs/ERD-Disporabudpar.png`](docs/ERD-Disporabudpar.png), dan versi vektornya di [`docs/ERD-Disporabudpar.svg`](docs/ERD-Disporabudpar.svg).
+
+![ERD](docs/ERD-Disporabudpar.png)
+
+## Struktur folder penting
+
+```
+app/
+  Livewire/Admin/        Halaman panel admin (Dashboard, Destinasi, Berita, ...)
+  Livewire/Publik/       Halaman situs publik (Beranda, PetaWisata, Berita, ...)
+  Models/                Model Eloquent
+  Http/Middleware/       PastikanAdminAktif (hanya akun aktif yang boleh masuk admin)
+database/
+  migrations/            Skema basis data
+  seeders/               Data awal dan data contoh
+public/css/              publik.css dan admin.css
+resources/views/
+  layouts/               publik.blade.php, admin.blade.php, admin-login.blade.php
+  livewire/              Tampilan tiap halaman
+routes/web.php           Semua route
+```
+
+## Pengembangan
+
+```bash
+php artisan test                # jalankan test
+./vendor/bin/pint               # rapikan gaya kode
+php artisan optimize:clear      # bersihkan cache (config, route, view)
+```
+
+## Deploy ke server (produksi)
+
+Di `.env` server:
+
+```env
+APP_ENV=production
+APP_DEBUG=false
+APP_URL=https://domain-anda.go.id
+```
+
+Lalu:
+
+```bash
+composer install --no-dev --optimize-autoloader
+php artisan migrate --force
+php artisan storage:link
+php artisan optimize
+```
+
+Arahkan *document root* web server ke folder `public/`. Jangan pernah mengunggah file `.env` ke GitHub, dan **ganti password admin** setelah login pertama.
+
+## Masalah umum
+
+| Pesan error | Penyebab dan solusi |
+|---|---|
+| `No application encryption key has been specified` | Jalankan `php artisan key:generate` |
+| `SQLSTATE[HY000] [1049] Unknown database` | Database belum dibuat atau nama di `DB_DATABASE` salah (langkah 4 dan 5) |
+| `SQLSTATE[HY000] [1045] Access denied` | `DB_USERNAME` atau `DB_PASSWORD` salah |
+| `Table 'sessions' doesn't exist` | Migrasi belum dijalankan: `php artisan migrate` |
+| Tidak bisa login admin | `ADMIN_PASSWORD` kosong saat seeding. Isi di `.env`, lalu `php artisan db:seed --class=AdminSeeder` |
+| Gambar yang diunggah tidak tampil | Jalankan `php artisan storage:link` |
+| `Route [...] not defined` | Halaman tersebut belum dibuat. Lihat bagian "Dalam pengembangan" |
+| Perubahan tampilan tidak muncul | `php artisan optimize:clear` |
+
+## Lisensi
+
+Dibangun di atas [Laravel](https://laravel.com), yang berlisensi [MIT](https://opensource.org/licenses/MIT).
